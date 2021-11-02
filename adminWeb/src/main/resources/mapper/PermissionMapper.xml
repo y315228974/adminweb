@@ -127,4 +127,18 @@
         permission_icon as icon
         from system_permission where permission_type=1
     </select>
+
+    <select id="selectUserMenuListByRoleList" resultType="com.lz.adminweb.vo.system.MenuTreeNode">
+        select
+        b.permission_id as id,
+        b.permission_parent_id as parentId,
+        b.permission_url as url,
+        b.permission_name as name,
+        b.permission_icon as permissionIcon
+        from system_role_permission a left join system_permission b on a.permission_id=b.permission_id
+        where b.permission_type=1 and a.role_id in
+        <foreach collection="roleList" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

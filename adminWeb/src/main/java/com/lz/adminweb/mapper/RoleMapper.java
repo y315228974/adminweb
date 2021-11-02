@@ -35,15 +35,15 @@ public interface RoleMapper extends BaseMapper<SystemRole> {
      *
      * @param userId 用户id
      */
-    int deleteUserRole(@Param("userId") int userId);
+    int deleteUserRole(@Param("userId") long userId);
 
     /**
      * 查询用户角色
      */
-    List<SystemRole> getUserRoleList(@Param("userId") int userId);
+    List<SystemRole> getUserRoleList(@Param("userId") long userId);
 
     /**
      * 查询用户角色(不包含角色名称等字段)
      */
-    List<SystemUserRole> selectUserRoleList(@Param("userId") int userId);
+    List<SystemUserRole> selectUserRoleList(@Param("userId") long userId);
 }

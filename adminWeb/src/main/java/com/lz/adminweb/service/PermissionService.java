@@ -2,6 +2,7 @@ package com.lz.adminweb.service;
 
 import com.lz.adminweb.domain.UserPermission;
 import com.lz.adminweb.vo.JsonResult;
+import com.lz.adminweb.vo.system.MenuTreeNode;
 import com.lz.adminweb.vo.system.RolePermissionTreeNode;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,12 +44,19 @@ public interface PermissionService {
      * 获取网站菜单和权限树状结构
      *
      */
-    JsonResult getPermissionListBySiteId();
+    JsonResult getPermissionList();
 
     /**
      * 获取网站菜单树状结构
      *
      */
-    JsonResult getMenuListBySiteId();
+    JsonResult getMenuList();
+
+    /**
+     * 获取用户网站菜单
+     *
+     * @param userId   用户id
+     */
+    List<MenuTreeNode> getUserMenuList(long userId);
 
 }

@@ -1,9 +1,11 @@
 package com.lz.adminweb.shiro;
 
+import com.lz.adminweb.vo.system.MenuTreeNode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Shiro用户信息
@@ -50,6 +52,8 @@ public class ShiroUser implements Serializable {
     @ApiModelProperty("角色类型")
     private Integer roleType;
 
+    @ApiModelProperty("用户菜单")
+    List<MenuTreeNode> menuList;
 
 }
 

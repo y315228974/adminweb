@@ -11,6 +11,7 @@ import com.lz.adminweb.exception.ConsciousException;
 import com.lz.adminweb.mapper.AdminUserMapper;
 import com.lz.adminweb.redis.RedisUtil;
 import com.lz.adminweb.service.AdminUserService;
+import com.lz.adminweb.service.PermissionService;
 import com.lz.adminweb.shiro.CustomizedToken;
 import com.lz.adminweb.shiro.LoginType;
 import com.lz.adminweb.shiro.ShiroUser;
@@ -49,6 +50,9 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private PermissionService permissionService;
 
     /**
      * 登录
@@ -171,15 +175,7 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
                 subject.getSession().setAttribute("shiroUserAdmin", shiroUser);
                 subject.getSession().setTimeout(expiration);
                 shiroUser.setToken(subject.getSession().getId());
-                //TODO 更新最后登录时间
-                //userMapper.updateLastLoginDate(new Date(), shiroUser.getId());
-
-//                String redirect_uri = "";
-//                SavedRequest savedRequest = WebUtils.getSavedRequest(request);
-//                // 获取保存的URL
-//                if (!(savedRequest == null || savedRequest.getRequestUrl() == null)) {
-//                    redirect_uri = savedRequest.getRequestUrl();
-//                }
+                shiroUser.setMenuList(permissionService.getUserMenuList(adminUser.getId()));
                 return JsonResult.ok(shiroUser);
             }
         } catch (AuthenticationException ex) {

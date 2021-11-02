@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.lz.adminweb.domain.SystemPermission;
 import com.lz.adminweb.domain.SystemRolePermission;
 import com.lz.adminweb.domain.UserPermission;
+import com.lz.adminweb.vo.system.MenuTreeNode;
 import com.lz.adminweb.vo.system.PermissionTreeNode;
 import com.lz.adminweb.vo.system.RolePermissionList;
 import com.lz.adminweb.vo.system.RolePermissionTreeNode;
@@ -81,5 +82,10 @@ public interface PermissionMapper extends BaseMapper<SystemPermission> {
      *
      */
     List<PermissionTreeNode> selectMenuAndPermissionList();
+
+    /**
+     * 获取用户菜单
+     */
+    List<MenuTreeNode> selectUserMenuListByRoleList(@Param("roleList") List<Integer> roleList);
 
 }

@@ -98,16 +98,16 @@ public class PermissionController {
         return permissionService.getRolePermissionList(request, roleId);
     }
 
-    //@RequestMapping(value = "getPermissionListBySiteId", method = RequestMethod.POST)
+    //@RequestMapping(value = "getPermissionList", method = RequestMethod.POST)
     //@ApiOperation(value = "获取网站菜单和权限树状结构", notes = "获取网站菜单和权限树状结构")
-    //public JsonResult<List<PermissionTreeNode>> getPermissionListBySiteId() {
-    //    return permissionService.getPermissionListBySiteId();
+    //public JsonResult<List<PermissionTreeNode>> getPermissionList() {
+    //    return permissionService.getPermissionList();
     //}
 
-    @RequestMapping(value = "getMenuListBySiteId", method = RequestMethod.POST)
+    @RequestMapping(value = "getMenuList", method = RequestMethod.POST)
     @ApiOperation(value = "获取网站菜单树状结构", notes = "获取网站菜单树状结构")
-    public JsonResult<List<PermissionTreeNode>> getMenuListBySiteId() {
-        return permissionService.getMenuListBySiteId();
+    public JsonResult<List<PermissionTreeNode>> getMenuList() {
+        return permissionService.getMenuList();
     }
 
 }

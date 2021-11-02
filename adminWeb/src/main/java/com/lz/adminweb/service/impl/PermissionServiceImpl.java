@@ -1,5 +1,6 @@
 package com.lz.adminweb.service.impl;
 
+import com.google.common.collect.Lists;
 import com.lz.adminweb.domain.SystemPermission;
 import com.lz.adminweb.domain.SystemRolePermission;
 import com.lz.adminweb.domain.SystemUserRole;
@@ -11,6 +12,7 @@ import com.lz.adminweb.shiro.ShiroUser;
 import com.lz.adminweb.shiro.ShiroUserUtil;
 import com.lz.adminweb.utils.TreeUtil;
 import com.lz.adminweb.vo.JsonResult;
+import com.lz.adminweb.vo.system.MenuTreeNode;
 import com.lz.adminweb.vo.system.PermissionTreeNode;
 import com.lz.adminweb.vo.system.RolePermissionList;
 import com.lz.adminweb.vo.system.RolePermissionTreeNode;
@@ -168,7 +170,7 @@ public class PermissionServiceImpl implements PermissionService {
      * 获取网站菜单和权限树状结构
      */
     @Override
-    public JsonResult getPermissionListBySiteId() {
+    public JsonResult getPermissionList() {
         List<PermissionTreeNode> rolePermissionListList = permissionMapper.selectMenuAndPermissionList();
         List<PermissionTreeNode> treeList = TreeUtil.listToTree(rolePermissionListList);
         return JsonResult.ok(treeList);
@@ -179,10 +181,83 @@ public class PermissionServiceImpl implements PermissionService {
      *
      */
     @Override
-    public JsonResult getMenuListBySiteId() {
+    public JsonResult getMenuList() {
         List<PermissionTreeNode> rolePermissionListList = permissionMapper.selectMenuList();
         List<PermissionTreeNode> treeList = TreeUtil.listToTree(rolePermissionListList);
         return JsonResult.ok(treeList);
     }
 
+    /**
+     * 获取用户网站菜单
+     *
+     * @param userId   用户id
+     */
+    @Override
+    public List<MenuTreeNode> getUserMenuList(long userId) {
+        List<SystemUserRole> userRoleList = roleMapper.selectUserRoleList(userId);
+        if (userRoleList == null || userRoleList.size() == 0) {
+            return new ArrayList<>();
+        }
+        List<Integer> roleList = userRoleList.stream().map(SystemUserRole::getRoleId).distinct().collect(Collectors.toList());
+        List<MenuTreeNode> permissionTreeNodeList = permissionMapper.selectUserMenuListByRoleList(roleList);
+        if (permissionTreeNodeList == null || permissionTreeNodeList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        // 去重
+        Set<Integer> set = new HashSet<>();
+        List<MenuTreeNode> newList = new ArrayList<>();
+        for (MenuTreeNode element : permissionTreeNodeList) {
+            if (element != null) {
+                if (set.add(element.getId()))
+                    newList.add(element);
+            }
+        }
+        // 获取所有菜单
+        List<PermissionTreeNode> allList = permissionMapper.selectMenuList();
+        // 添加所有父元素
+        newList = this.addParentMenu(newList, allList);
+        return TreeUtil.MenuListToTree(newList);
+    }
+
+    /**
+     * 补充父菜单
+     * @author: luzhichao
+     * @param list
+     * @param allList 所有菜单
+     * @return: void
+     * @date: 2021/11/2 17:14
+     */
+    private List<MenuTreeNode> addParentMenu(List<MenuTreeNode> list, List<PermissionTreeNode> allList) {
+        List<MenuTreeNode> newList = Lists.newArrayList();
+        for (MenuTreeNode menuTreeNode : list) {
+            newList.add(menuTreeNode);
+            addParentMenuRecursion(newList, allList, menuTreeNode);
+        }
+        return newList;
+    }
+
+    /**
+     * 递归获取父元素
+     * @author: luzhichao
+     * @param list
+     * @param allList
+     * @param menuTreeNode
+     * @return: void
+     * @date: 2021/11/2 17:23
+     */
+    private void addParentMenuRecursion(List<MenuTreeNode> list, List<PermissionTreeNode> allList, MenuTreeNode menuTreeNode) {
+        if (menuTreeNode.getParentId() != 0) {
+            PermissionTreeNode node = allList.stream().filter(a -> a.getId() == menuTreeNode.getParentId()).findFirst().orElse(null);
+            if (node != null) {
+                MenuTreeNode menuTreeNodeNew = new MenuTreeNode();
+                menuTreeNodeNew.setId(node.getId());
+                menuTreeNodeNew.setParentId(node.getParentId());
+                menuTreeNodeNew.setName(node.getName());
+                menuTreeNodeNew.setUrl(node.getUrl());
+                menuTreeNodeNew.setPermissionIcon(node.getIcon());
+                list.add(menuTreeNodeNew);
+                addParentMenuRecursion(list, allList, menuTreeNodeNew);
+            }
+        }
+    }
 }
