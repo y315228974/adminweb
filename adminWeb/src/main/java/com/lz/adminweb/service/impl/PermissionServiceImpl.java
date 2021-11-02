@@ -255,7 +255,10 @@ public class PermissionServiceImpl implements PermissionService {
                 menuTreeNodeNew.setName(node.getName());
                 menuTreeNodeNew.setUrl(node.getUrl());
                 menuTreeNodeNew.setPermissionIcon(node.getIcon());
-                list.add(menuTreeNodeNew);
+                long count = list.stream().filter(l -> l.getId() == menuTreeNodeNew.getId()).count();
+                if (count == 0) {
+                    list.add(menuTreeNodeNew);
+                }
                 addParentMenuRecursion(list, allList, menuTreeNodeNew);
             }
         }
