@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lz.adminweb.mapper.RoleMapper">
+    <insert id="insertRole">
+        insert into system_role (role_name,role_description,create_user,create_date,is_active)
+        values(#{roleName},#{roleDescription},#{createUser},NOW(),1)
+    </insert>
+
+    <update id="updateRole">
+        update system_role set
+        role_name=#{roleName},
+        role_description=#{roleDescription}
+        where role_id=#{roleId}
+    </update>
+
+    <update id="deleteRole">
+        update system_role set is_active=0 where role_id=#{roleId}
+    </update>
+
+    <select id="selectRoleList" resultType="com.lz.adminweb.domain.SystemRole">
+        select
+        role_id as roleId,
+        role_name as roleName,
+        role_description as roleDescription,
+        create_user as createUser,
+        create_date as createDate,
+        is_active as isActive
+        from system_role where is_active=1
+    </select>
+
+    <select id="selectRoleDetail" resultType="com.lz.adminweb.domain.SystemRole">
+        select
+        role_id as roleId,
+        role_name as roleName,
+        role_description as roleDescription,
+        create_user as createUser,
+        create_date as createDate,
+        is_active as isActive
+        from system_role where role_id=#{roleId} and is_active=1
+    </select>
+
+    <insert id="addUserRoleBitch">
+        insert into system_user_role (user_id,role_id)
+        values
+        <foreach collection="userRoleList" item="item" separator=",">
+            (#{item.userId},#{item.roleId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteUserRole">
+        delete from system_user_role where user_id=#{userId}
+    </delete>
+
+    <select id="getUserRoleList" resultType="com.lz.adminweb.domain.SystemRole">
+      select
+            a.role_id as roleId,
+            a.role_name as roleName,
+            a.role_description as roleDescription,
+            a.create_user as createUser,
+            a.create_date as createDate,
+            a.is_active as isActive
+            from system_role a left join system_user_role b on a.role_id=b.role_id
+             where b.user_id=#{userId}
+    </select>
+
+    <select id="selectUserRoleList" resultType="com.lz.adminweb.domain.SystemUserRole">
+      select
+            role_id as roleId,
+            user_id as userId
+            from system_user_role
+            where user_id=#{userId}
+    </select>
+</mapper>
