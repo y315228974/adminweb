@@ -12,7 +12,6 @@ public class TestMd5 {
         String pwd = "Aa123456";
         String md5 = MD5Util.md5WithSalt(pwd);
         System.out.println(md5);
-        System.out.println(md5);
         System.out.println("========: " + ((13 & 12) == 12));
     }
 }
